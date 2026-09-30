@@ -26,7 +26,7 @@ async function book(){
   if(!date||!selected||!name||!phone){alert('Completa el día, la hora, nombre y teléfono.');return;}
   const time=selected; selected='';
   try{
-    const r=await fetch(SUPABASE_URL+'/rest/v1/appointments',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({appointment_date:date,appointment_time:time,customer_name:name,phone,status:'confirmed'})});
+    const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/create_appointment',{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_date:date,p_time:time+':00',p_name:name,p_phone:phone})});
     if(r.status===409){msg.style.display='block';msg.textContent='Ese horario acaba de ser reservado por otra persona. Elige otro.';await render();return;}
     if(!r.ok){const detail=await r.text();console.error(detail);throw new Error('No se pudo guardar la cita.');}
     msg.style.display='block';msg.textContent='Cita confirmada: '+date+' a las '+fmt(time);document.getElementById('name').value='';document.getElementById('phone').value='';await render();
